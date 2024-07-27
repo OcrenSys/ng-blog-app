@@ -14,7 +14,10 @@
     alt="Travel Image"
   />
   <div class="p-4">
-    <h2 class="mt-2 text-xl font-extrabold text-[#161B2D]">
+    <h2
+      [routerLink]="['/details', post.id]"
+      class="mt-2 text-xl font-extrabold text-[#161B2D] hover:text-blue-600 hover:cursor-pointer"
+    >
       {{ post?.title }}
     </h2>
     <p class="mt-1 text-[#6B7C93]">
