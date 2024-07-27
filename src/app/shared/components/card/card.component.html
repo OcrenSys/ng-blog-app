@@ -1,0 +1,49 @@
+<div
+  [routerLink]="['/details', post.id]"
+  class="relative w-auto bg-white rounded-lg shadow-sm overflow-hidden"
+>
+  <div class="w-full flex items-center justify-between">
+    <span
+      class="absolute z-10 top-4 left-4 bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+      >{{ post?.price }}</span
+    >
+    <span class="absolute z-10 top-4 right-4 text-yellow-400 text-xl"
+      >&#9733;</span
+    >
+  </div>
+  <img
+    class="w-full h-48 object-cover custom-clip"
+    src="https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/advisor/wp-content/uploads/2022/12/Remote_Job.jpeg.jpg"
+    alt="Travel Image"
+  />
+  <div class="p-4">
+    <h2
+      [routerLink]="['/details', post.id]"
+      class="mt-2 text-xl font-extrabold text-[#161B2D] hover:text-blue-600 hover:cursor-pointer"
+    >
+      {{ post?.title }}
+    </h2>
+    <p class="mt-1 text-[#6B7C93]">
+      {{ post?.description }}
+    </p>
+
+    <div class="divide my-4"></div>
+    <!-- <div class="divide-y divide-[#F3F7FB] h-[1px] w-full"></div> -->
+
+    <div class="flex items-center mt-4">
+      <img
+        class="w-10 h-10 object-cover rounded-full"
+        src="https://dy7glz37jgl0b.cloudfront.net/advice/images/3f64195ec17bf2d488a315987f4861e5-woman-smiles-while-crossing-the-street-in-a-city_l.jpg"
+        alt="Profile Image"
+      />
+      <div class="w-full mx-3 flex justify-between">
+        <h3 class="text-sm font-bold text-[#6B7C93]">
+          {{ post?.author | uppercase }}
+        </h3>
+        <p class="text-sm font-bold text-[#6B7C93]">
+          {{ post?.date | uppercase }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
