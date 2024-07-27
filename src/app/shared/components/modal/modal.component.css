@@ -1,3 +1,9 @@
 .custom-clip {
   clip-path: ellipse(100% 140% at 0% 25%);
 }
+
+@media (width <= 768px) {
+  .custom-clip {
+    clip-path: ellipse(100% 75% at 10% 25%);
+  }
+}
