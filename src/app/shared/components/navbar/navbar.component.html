@@ -13,8 +13,10 @@
 
     <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <a
-        [href]=""
-        class="block py-2 px-3 text-[#506690] font-bold text-whiterounded md:bg-transparent md:p-0"
+        type="button"
+        data-modal-target="modal"
+        data-modal-toggle="modal"
+        class="block py-2 px-3 text-[#506690] font-bold text-whiterounded md:bg-transparent md:p-0 hover:cursor-pointer"
         aria-current="page"
         >{{ "Login" }}</a
       >
@@ -69,3 +71,5 @@
     </div>
   </div>
 </nav>
+
+<app-modal />
