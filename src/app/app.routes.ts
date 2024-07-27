@@ -20,6 +20,13 @@ export const routes: Routes = [
             (module) => module.PostListComponent
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () =>
+          import('./features/pages/not-found/not-found.component').then(
+            (module) => module.NotFoundComponent
+          ),
+      },
     ],
   },
   {
@@ -29,5 +36,5 @@ export const routes: Routes = [
         (module) => module.PostDetailsComponent
       ),
   },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: 'posts/not-found' },
 ];

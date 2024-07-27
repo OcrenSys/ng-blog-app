@@ -1,0 +1,23 @@
+<div
+  class="flex flex-col lg:flex-row items-center justify-center mt-4 md:mt-32 p-8 md:p-16 lg:p-8 bg-gray-100"
+>
+  <div class="text-center lg:text-left lg:w-1/2 space-y-4">
+    <h1 class="text-4xl font-bold text-gray-800">Uh oh.</h1>
+    <p class="text-lg text-gray-600">
+      We ran into an issue, but don’t worry, we’ll take care of it for sure.
+    </p>
+    <button
+      (click)="goHome()"
+      class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+    >
+      Back to safety
+    </button>
+  </div>
+  <div class="mt-8 lg:mt-0 lg:w-1/2 flex justify-center">
+    <img
+      src="assets/not-found.png"
+      alt="Error illustration"
+      class="w-5/6 sm:w-full md:max-w-md"
+    />
+  </div>
+</div>
