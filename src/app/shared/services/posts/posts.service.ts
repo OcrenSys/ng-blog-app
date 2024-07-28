@@ -4,6 +4,8 @@ import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { finalize, map, distinctUntilChanged } from 'rxjs/operators';
 import { PostRepository } from '../repositories/post.repository.service';
 import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
+import { AuthService } from '../auth/auth.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,11 @@ export class PostsService implements PostServiceInterface {
   public resultsSubject = new BehaviorSubject<number>(0);
   public posts$: Observable<Post[]>;
 
-  constructor(private postRepository: PostRepository) {
+  constructor(
+    private postRepository: PostRepository,
+    private favoriteService: FavoritesService,
+    private authService: AuthService
+  ) {
     this.posts$ = this.initializePostsStream();
     this.loadPosts();
   }
@@ -40,9 +46,25 @@ export class PostsService implements PostServiceInterface {
 
   private loadPosts(): void {
     this.postRepository.getAllPosts().subscribe((posts) => {
-      this.postsSubject.next(posts);
+      this.postsSubject.next(this.checkFavorites(posts));
       this.loadingSubject.next(false);
     });
+  }
+
+  private checkFavorites(posts: Post[]): Post[] {
+    const currentUser = this.authService.getCurrentUserEmail();
+    if (currentUser) {
+      const favoritePostIds = this.favoriteService.getFavorites(currentUser);
+
+      const updatedPosts = posts.map((post) => ({
+        ...post,
+        isFavorite: favoritePostIds.includes(post.id.toString()),
+      }));
+
+      return updatedPosts;
+    }
+
+    return posts;
   }
 
   private initializePostsStream(): Observable<Post[]> {
@@ -103,8 +125,16 @@ export class PostsService implements PostServiceInterface {
         .setFavoriteStatus(id, isFavorite)
         .subscribe((response) => {
           console.log(response);
+          this.updateFavoriteStorage(id);
         });
       this.postsSubject.next(posts);
+    }
+  }
+
+  updateFavoriteStorage(id: number) {
+    const currentUserEmail = this.authService.getCurrentUserEmail();
+    if (currentUserEmail) {
+      this.favoriteService.saveFavorite(currentUserEmail, id.toString());
     }
   }
 }
