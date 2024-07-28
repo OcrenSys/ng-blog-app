@@ -25,7 +25,7 @@ export class PostDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loading$ = this.postService.loading$;
+    this.loading$ = this.postService.loadingSubject;
 
     this.activateRoute.paramMap.subscribe({
       next: (params) => {
@@ -39,7 +39,6 @@ export class PostDetailsComponent implements OnInit {
               .pipe(take(1))
               .subscribe((_post: Post) => {
                 this.post = _post;
-                
               });
           }
         }

@@ -31,11 +31,12 @@
         class="block w-full p-4 ps-10 text-lg font-bold placeholder-[#161C2D] text-[#161C2D] border border-gray-300 rounded-md bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Search"
         required
+        (input)="onSearch($event)"
       />
       <p
         class="absolute end-28 bottom-5 hidden md:flex font-bold text-[#869AB8] text-xs"
       >
-        123 RESULTS
+        {{ result$ | async }} RESULTS
       </p>
       <button
         type="submit"

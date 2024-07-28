@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CardComponent } from '../../../shared/components/card/card.component';
 import { Observable } from 'rxjs';
 import { PostsService } from '../../../shared/services/posts/posts.service';
@@ -20,9 +20,8 @@ export class PostListComponent {
   constructor(private postService: PostsService) {}
 
   ngOnInit(): void {
-    this.postService.loadPosts();
     this.posts$ = this.postService.posts$;
-    this.loading$ = this.postService.loading$;
+    this.loading$ = this.postService.loadingSubject;
   }
 
   loadMore(): void {
