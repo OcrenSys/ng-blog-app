@@ -16,7 +16,7 @@ import { RepeatPipe } from '../../../shared/pipes/repeat/repeat.pipe';
 })
 export class PostDetailsComponent implements OnInit {
   private id: number = 0;
-  protected post!: Post;
+  protected post: Post | undefined;
   protected loading$: Observable<boolean> = new Observable<boolean>();
 
   constructor(

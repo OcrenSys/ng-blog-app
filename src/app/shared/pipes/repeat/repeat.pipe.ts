@@ -5,9 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class RepeatPipe implements PipeTransform {
-  transform(value: string, times: number): string {
+  transform(value: string | undefined, times: number): string {
     if (!value || times < 1) {
-      return value;
+      return value ?? '';
     }
 
     return Array(times).fill(value).join(' ');
