@@ -1,24 +1,25 @@
-// services/posts.service.ts
 import { Injectable } from '@angular/core';
 import { Post } from '../../../common/interfaces/post.interface';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { InMemoryPostRepository } from './memory.repository';
-import { PostServiceOperations } from './service.interface';
+import { finalize, map } from 'rxjs/operators';
+import { PostRepository } from '../repositories/post.repository.service';
+import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostsService implements PostServiceOperations {
+export class PostsService implements PostServiceInterface {
   private dataSubject = new BehaviorSubject<Post[]>([]);
   private currentPageSubject = new BehaviorSubject<number>(1);
   private itemsToShow = 3;
 
   data$ = this.dataSubject.asObservable();
-  posts$: Observable<Post[]>;
+  posts$: Observable<Post[]> = new Observable<Post[]>();
   loading$ = new BehaviorSubject<boolean>(true);
 
-  constructor(private postRepository: InMemoryPostRepository) {
+  constructor(private postRepository: PostRepository) {}
+
+  loadPosts(): void {
     this.loadInitialPosts();
     this.posts$ = combineLatest([this.data$, this.currentPageSubject]).pipe(
       map(([posts, page]) => posts.slice(0, page * this.itemsToShow))
@@ -35,5 +36,11 @@ export class PostsService implements PostServiceOperations {
   getMorePosts(): void {
     const currentPage = this.currentPageSubject.value + 1;
     this.currentPageSubject.next(currentPage);
+  }
+
+  getPostById(id: number): Observable<Post> {
+    return this.postRepository
+      .getPostById(id)
+      .pipe(finalize(() => this.loading$.next(false)));
   }
 }

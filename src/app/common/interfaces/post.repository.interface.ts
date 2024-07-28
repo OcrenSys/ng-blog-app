@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Post } from './post.interface';
 
-export interface PostRepository {
+export interface PostRepositoryInterface {
   getAllPosts(): Observable<Post[]>;
 }

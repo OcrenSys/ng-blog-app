@@ -1,19 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CardComponent } from '../../../shared/components/card/card.component';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  finalize,
-  map,
-  Observable,
-} from 'rxjs';
+import { Observable } from 'rxjs';
 import { PostsService } from '../../../shared/services/posts/posts.service';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../common/interfaces/post.interface';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
-import console from 'console';
-import { InMemoryPostRepository } from '../../../shared/services/posts/memory.repository';
 
 @Component({
   selector: 'app-post-list',
@@ -29,6 +20,7 @@ export class PostListComponent {
   constructor(private postService: PostsService) {}
 
   ngOnInit(): void {
+    this.postService.loadPosts();
     this.posts$ = this.postService.posts$;
     this.loading$ = this.postService.loading$;
   }

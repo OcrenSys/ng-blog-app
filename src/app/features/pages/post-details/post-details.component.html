@@ -24,21 +24,22 @@
   </button>
 
   <h1 class="text-4xl text-center font-extrabold mt-16 mb-8">
-    {{ post?.title }}
+    {{ post.title | repeat : 3 }}
   </h1>
   <p class="text-lg text-[#506690] text-center font-bold mb-6">
-    {{ post?.description }}
+    {{ post.subtitle | repeat : 3 }}
   </p>
   <div class="flex items-center justify-between">
     <div class="flex items-center mb-6">
       <img
-        [src]="post.avatar"
-        [alt]="post.title"
+        [src]="post.author.avatar"
+        [alt]="post.author.name"
         class="w-10 h-10 rounded-full mr-4"
       />
       <div class="text-xs md:text-sm">
         <p class="text-[#161C2D] leading-none font-extrabold">
-          {{ post.author | uppercase }}
+          {{ post.author.name | uppercase }}
+          {{ post.author.lastname | uppercase }}
         </p>
         <p class="text-[#ABBCD5] font-bold">Published on {{ post.date }}</p>
       </div>
@@ -136,16 +137,20 @@
     </div>
   </div>
   <img
-    [src]="post.avatar"
+    [src]="post.image"
     alt="Photo description"
-    class="w-full h-auto mb-4 mt-8"
+    class="w-full h-[600px] object-cover mb-4 mt-8"
   />
   <p class="text-[#869AB8] font-bold text-center italic mb-6">
     This is a caption on this photo for reference
   </p>
   <div class="mt-16">
     <p class="mb-4 text-[#161C2D] text-justify font-bold">
-      {{ post.content }}
+      {{ post.description | repeat : 10 }}
     </p>
   </div>
 </div>
+
+@if (loading$ | async ) {
+<app-spinner />
+}
