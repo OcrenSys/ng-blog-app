@@ -80,4 +80,31 @@ export class PostsService implements PostServiceInterface {
     const startIndex = (page - 1) * this.pageSize;
     return posts.slice(0, startIndex + this.pageSize);
   }
+
+  createPost(post: any): Observable<Post> {
+    return this.postRepository.createPost(post);
+  }
+
+  favorite(id: number): void {
+    this.updatePostFavoriteStatus(id, true);
+  }
+
+  unFavorite(id: number): void {
+    this.updatePostFavoriteStatus(id, false);
+  }
+
+  private updatePostFavoriteStatus(id: number, isFavorite: boolean): void {
+    const posts = this.postsSubject.getValue();
+    const postIndex = posts.findIndex((post) => post.id === id);
+
+    if (postIndex !== -1) {
+      posts[postIndex] = { ...posts[postIndex], isFavorite };
+      this.postRepository
+        .setFavoriteStatus(id, isFavorite)
+        .subscribe((response) => {
+          console.log(response);
+        });
+      this.postsSubject.next(posts);
+    }
+  }
 }

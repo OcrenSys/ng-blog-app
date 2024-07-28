@@ -21,6 +21,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./features/pages/favorites/favorites.component').then(
+            (module) => module.FavoritesComponent
+          ),
+      },
+      {
         path: 'not-found',
         loadComponent: () =>
           import('./features/pages/not-found/not-found.component').then(

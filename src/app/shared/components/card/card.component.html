@@ -1,14 +1,14 @@
-<div
-  [routerLink]="['/details', post?.id]"
-  class="relative w-auto bg-white rounded-lg shadow-sm overflow-hidden"
->
+<div class="relative w-auto bg-white rounded-lg shadow-sm overflow-hidden">
   <div class="w-full flex items-center justify-between">
     <span
       [status]="post?.status || ''"
       class="absolute z-10 top-4 left-4 text-white font-bold text-xs px-2 py-1 rounded-full"
       >${{ post?.price || 0 | number : "1.0" }} / MO</span
     >
-    <span class="absolute z-10 top-4 right-4 text-yellow-400 text-xl"
+    <span
+      class="absolute z-10 top-4 text-gray-400 right-4 text-xl cursor-pointer"
+      [ngClass]="{ 'text-yellow-400': post?.isFavorite }"
+      (click)="toggleFavorite()"
       >&#9733;</span
     >
   </div>

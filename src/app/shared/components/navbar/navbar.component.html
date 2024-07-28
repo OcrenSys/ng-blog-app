@@ -57,13 +57,11 @@
         @for (item of menu; track $index) {
         <li>
           <a
-            [href]="item.path"
+            [routerLink]="[item.path]"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             class="block py-2 px-3 font-bold text-whiterounded md:bg-transparent md:p-0"
             aria-current="page"
-            [ngClass]="{
-              'text-blue-700': $index === 0,
-              ' text-[#506690]': $index !== 0
-            }"
             >{{ item.label }}</a
           >
         </li>

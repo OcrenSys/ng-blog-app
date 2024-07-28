@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Post } from '../../../common/interfaces/post.interface';
 import { PostRepositoryInterface } from '../../../common/interfaces/post.repository.interface';
 import {
@@ -58,6 +62,19 @@ export class PostRepository implements PostRepositoryInterface {
       map(([post, author]) => ({ ...post, author })),
       catchError(this.handleError)
     );
+  }
+
+  createPost(post: Omit<Post, 'id'>): Observable<Post> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.httpClient.post<Post>(this.apiUrl, post, { headers });
+  }
+
+  setFavoriteStatus(id: number, isFavorite: boolean): Observable<Post> {
+    const url = `${this.apiUrl}/${id}`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { isFavorite };
+
+    return this.httpClient.patch<Post>(url, body, { headers });
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
