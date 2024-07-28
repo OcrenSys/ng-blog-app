@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Post } from '../../../common/interfaces/post.interface';
 
 @Component({
   selector: 'app-card',
@@ -10,5 +11,5 @@ import { RouterModule } from '@angular/router';
   styleUrl: './card.component.css',
 })
 export class CardComponent {
-  @Input() post: any = undefined;
+  @Input() post: Post | undefined;
 }
