@@ -43,7 +43,7 @@ export class PostDetailsComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.log('Something went wrong');
+        console.error('Something went wrong', error);
       },
       complete: () => {},
     });

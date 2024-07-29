@@ -7,11 +7,10 @@ import {
   distinctUntilChanged,
   tap,
   filter,
-  switchMap,
+  take,
 } from 'rxjs/operators';
 import { PostRepository } from '../repositories/post.repository.service';
 import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
-import { AuthService } from '../auth/auth.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { mockPost } from '../../../common/utilities/post.utilities';
 
@@ -30,8 +29,7 @@ export class PostsService implements PostServiceInterface {
 
   constructor(
     private postRepository: PostRepository,
-    private favoriteService: FavoritesService,
-    private authService: AuthService
+    private favoriteService: FavoritesService
   ) {
     this.posts$ = this.initializePostsStream();
     this.loadPosts();
@@ -101,17 +99,21 @@ export class PostsService implements PostServiceInterface {
     );
   }
 
-  private loadPosts(): void {
-    this.postRepository.getAllPosts().subscribe((posts) => {
-      this.postsSubject.next(this.checkFavorites(posts));
-      this.loadingSubject.next(false);
-    });
+  loadPosts(): void {
+    this.postRepository
+      .getAllPosts()
+      .pipe(take(1))
+      .subscribe((posts) => {
+        this.postsSubject.next(this.checkFavorites(posts));
+        this.loadingSubject.next(false);
+      });
   }
 
   private checkFavorites(posts: Post[]): Post[] {
-    const currentUser = this.authService.getCurrentUserEmail();
-    if (currentUser) {
-      const favoritePostIds = this.favoriteService.getFavorites(currentUser);
+    const currentUserEmail = localStorage.getItem('current_user');
+    if (currentUserEmail) {
+      const favoritePostIds =
+        this.favoriteService.getFavorites(currentUserEmail);
 
       const updatedPosts = posts.map((post) => ({
         ...post,
@@ -178,18 +180,14 @@ export class PostsService implements PostServiceInterface {
 
     if (postIndex !== -1) {
       posts[postIndex] = { ...posts[postIndex], isFavorite };
-      this.postRepository
-        .setFavoriteStatus(id, isFavorite)
-        .subscribe((response) => {
-          console.log(response);
-          this.updateFavoriteStorage(id);
-        });
+
+      this.updateFavoriteStorage(id);
       this.postsSubject.next(posts);
     }
   }
 
   updateFavoriteStorage(id: number) {
-    const currentUserEmail = this.authService.getCurrentUserEmail();
+    const currentUserEmail = localStorage.getItem('current_user');
     if (currentUserEmail) {
       this.favoriteService.saveFavorite(currentUserEmail, id.toString());
     }

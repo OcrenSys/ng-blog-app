@@ -9,6 +9,7 @@ import { SigninComponent } from '../signin/signin.component';
 import { DynamicComponentService } from '../../services/dynamic-components/dynamic-component.service';
 import { FormComponent } from '../form/form.component';
 import { SignupComponent } from '../signup/signup.component';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-card',
@@ -40,6 +41,11 @@ export class CardComponent {
   onEdit($event: Event): void {
     $event.stopPropagation();
     this.onOpen(FormComponent, this.post);
+  }
+
+  onDelete($event: Event): void {
+    $event.stopPropagation();
+    this.postService.delete(this.post?.id!).pipe(take(1)).subscribe();
   }
 
   onOpen(

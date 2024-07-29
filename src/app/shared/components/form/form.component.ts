@@ -8,6 +8,7 @@ import {
 import { PostsService } from '../../services/posts/posts.service';
 import { DynamicComponentService } from '../../services/dynamic-components/dynamic-component.service';
 import { Post } from '../../../common/interfaces/post.interface';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-form',
@@ -57,32 +58,38 @@ export class FormComponent implements OnInit {
   }
 
   create(data: any) {
-    this.postService.create(data).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.error(error);
-      },
-      complete: () => {
-        this.postForm.reset();
-        this.dynamicComponentService.modal.hide();
-      },
-    });
+    this.postService
+      .create(data)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          this.postForm.reset();
+          this.dynamicComponentService.modal.hide();
+        },
+      });
   }
 
   update(data: any) {
-    this.postService.update(this.data?.id as number, data).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.error(error);
-      },
-      complete: () => {
-        this.postForm.reset();
-        this.dynamicComponentService.modal.hide();
-      },
-    });
+    this.postService
+      .update(this.data?.id as number, data)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          this.postForm.reset();
+          this.dynamicComponentService.modal.hide();
+        },
+      });
   }
 }
