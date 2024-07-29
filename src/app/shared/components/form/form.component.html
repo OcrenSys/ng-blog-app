@@ -1,0 +1,66 @@
+<form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+  <div class="mb-4">
+    <input
+      type="text"
+      placeholder="Title"
+      class="w-full p-3 border rounded-md text-[#6E84A3] font-bold"
+      formControlName="title"
+    />
+    @if ( postForm.get('title')?.invalid && postForm.get('title')?.touched ) {
+    <div>
+      <small class="text-red-500">Title is required.</small>
+    </div>
+    }
+  </div>
+
+  <div class="mb-4">
+    <input
+      type="text"
+      placeholder="Subtitle"
+      class="w-full p-3 border rounded-md text-[#6E84A3] font-bold"
+      formControlName="subtitle"
+    />
+    @if ( postForm.get('subtitle')?.invalid && postForm.get('subtitle')?.touched
+    ) {
+    <div>
+      <small class="text-red-500">Subtitle is required.</small>
+    </div>
+    }
+  </div>
+
+  <div class="mb-4">
+    <textarea
+      placeholder="Description"
+      class="w-full p-3 border rounded-md text-[#6E84A3] font-bold"
+      formControlName="description"
+    ></textarea>
+    @if ( postForm.get('description')?.invalid &&
+    postForm.get('description')?.touched ){
+    <div>
+      <small class="text-red-500">Description is required.</small>
+    </div>
+    }
+  </div>
+
+  <div class="mb-4">
+    <input
+      type="number"
+      placeholder="Price"
+      class="w-full p-3 border rounded-md text-[#6E84A3] font-bold"
+      formControlName="price"
+    />
+    @if ( postForm.get('price')?.invalid && postForm.get('price')?.touched ) {
+    <div>
+      <small class="text-red-500">Price is required.</small>
+    </div>
+    }
+  </div>
+
+  <button
+    type="submit"
+    class="w-full p-3 bg-blue-600 text-white rounded-md"
+    [disabled]="postForm.invalid"
+  >
+    Submit
+  </button>
+</form>

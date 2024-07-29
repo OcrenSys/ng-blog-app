@@ -6,6 +6,7 @@ import {
 import { Post } from '../../../common/interfaces/post.interface';
 import { PostRepositoryInterface } from '../../../common/interfaces/post.repository.interface';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
   forkJoin,
@@ -29,6 +30,9 @@ export class PostRepository implements PostRepositoryInterface {
 
   private httpClient: HttpClient = inject(HttpClient);
 
+  /**
+   * *! can be implemented only for posts hosted on the server
+   *  */
   getAllPosts(): Observable<Post[]> {
     return this.httpClient.get<Post[]>(this.apiUrl).pipe(
       switchMap((posts: Post[]) => {
@@ -51,6 +55,19 @@ export class PostRepository implements PostRepositoryInterface {
     );
   }
 
+  getPost(
+    id: number,
+    postsSubject: BehaviorSubject<Post[]>
+  ): Observable<Post | undefined> {
+    return postsSubject.asObservable().pipe(
+      map((posts: Post[]) => posts.find((post) => post.id === id)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * *! can be implemented only for posts hosted on the server
+   *  */
   getPostById(id: number): Observable<Post> {
     return this.httpClient.get<Post>(`${this.apiUrl}/${id}`).pipe(
       switchMap((post: Post) =>
@@ -67,6 +84,25 @@ export class PostRepository implements PostRepositoryInterface {
   createPost(post: Omit<Post, 'id'>): Observable<Post> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.httpClient.post<Post>(this.apiUrl, post, { headers });
+  }
+
+  updatePost(
+    id: number,
+    post: Partial<Post>,
+    posts: Post[]
+  ): Observable<Post[]> {
+    const updatedPosts = [...posts];
+    const postIndex = updatedPosts.findIndex((p) => p.id === id);
+
+    if (postIndex !== -1) {
+      updatedPosts[postIndex] = { ...updatedPosts[postIndex], ...post };
+    }
+    return of(updatedPosts);
+  }
+
+  deletePost(id: number, posts: Post[]): Observable<Post[]> {
+    const updatedPosts = posts.filter((post) => post.id !== id);
+    return of(updatedPosts);
   }
 
   setFavoriteStatus(id: number, isFavorite: boolean): Observable<Post> {

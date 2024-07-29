@@ -38,6 +38,7 @@ export class SigninComponent {
       const success = this.authService.signIn(email, password);
       if (success) {
         this.signinForm.reset();
+        this.dynamicComponentService.modal.hide();
       }
     }
   }
