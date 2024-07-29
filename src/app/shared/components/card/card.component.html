@@ -1,0 +1,55 @@
+<div
+  [routerLink]="['/details', post?.id]"
+  class="relative w-auto bg-white rounded-lg shadow-sm overflow-hidden"
+>
+  <div class="w-full flex items-center justify-between">
+    <span
+      [status]="post?.status || ''"
+      class="absolute z-10 top-4 left-4 text-white font-bold text-xs px-2 py-1 rounded-full"
+      >${{ post?.price || 0 | number : "1.0" }} / MO</span
+    >
+    <span
+      class="absolute z-10 top-4 text-gray-400 right-4 text-xl cursor-pointer"
+      [ngClass]="{ 'text-yellow-400': post?.isFavorite }"
+      (click)="onFavorite($event)"
+      >&#9733;</span
+    >
+  </div>
+  <img
+    class="w-full h-48 object-cover custom-clip"
+    [src]="post?.image"
+    alt="Travel Image"
+  />
+  <div class="p-4">
+    <h2
+      [routerLink]="['/details', post?.id]"
+      class="mt-2 text-xl font-extrabold text-[#161B2D] hover:text-blue-600 hover:cursor-pointer"
+    >
+      {{ post?.title }}
+    </h2>
+    <p class="mt-1 text-[#6B7C93]">
+      {{ post?.description }}
+    </p>
+
+    <div class="divide my-4"></div>
+
+    <div class="flex items-center mt-4">
+      <img
+        class="w-10 h-10 object-cover rounded-full"
+        [src]="post?.author?.avatar"
+        height="60"
+        width="60"
+        er
+        alt="Profile Image"
+      />
+      <div class="w-full mx-3 flex justify-between">
+        <h3 class="text-sm font-bold text-[#6B7C93]">
+          {{ post?.author?.name }} {{ post?.author?.lastname }}
+        </h3>
+        <p class="text-sm font-bold text-[#6B7C93]">
+          {{ post?.date | date : "MMMM d" | uppercase }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

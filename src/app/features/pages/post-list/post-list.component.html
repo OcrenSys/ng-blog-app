@@ -1,0 +1,35 @@
+<div class="w-full px-8 xl:px-0 mb-3 mt-16">
+  <div class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    @for (post of posts$ | async ; track $index) {
+    <app-card [post]="post" />
+    }
+  </div>
+</div>
+
+@if (loading$ | async ) {
+<app-spinner />
+} @else {
+<div class="w-full mt-8 flex justify-center">
+  <button
+    (click)="loadMore()"
+    class="w-6/12 flex justify-between bg-transparent text-blue-700 font-bold py-2 px-4 border border-blue-100 hover:border-blue-400 rounded"
+  >
+    <div></div>
+    Load More
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+      />
+    </svg>
+  </button>
+</div>
+}

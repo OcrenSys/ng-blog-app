@@ -1,0 +1,158 @@
+<div class="relative mt-16 max-w-4xl mx-auto p-6">
+  <button
+    (click)="goBack()"
+    type="button"
+    class="absolute top-8 left-4 text-[#ABBCD5] bg-transparent focus:ring-1 focus:outline-none focus:ring-[#ABBCD5] font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6 mr-4"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+      />
+    </svg>
+
+    <span class="sr-only">Icon description</span>
+    Regresar
+  </button>
+
+  <h1 class="text-4xl text-center font-extrabold mt-16 mb-8">
+    {{ post?.title | repeat : 3 }}
+  </h1>
+  <p class="text-lg text-[#506690] text-center font-bold mb-6">
+    {{ post?.subtitle | repeat : 3 }}
+  </p>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center mb-6">
+      <img
+        [src]="post?.author?.avatar"
+        [alt]="post?.author?.name"
+        class="w-10 h-10 rounded-full mr-4"
+      />
+      <div class="text-xs md:text-sm">
+        <p class="text-[#161C2D] leading-none font-extrabold">
+          {{ post?.author?.name | uppercase }}
+          {{ post?.author?.lastname | uppercase }}
+        </p>
+        <p class="text-[#ABBCD5] font-bold">
+          Published on {{ post?.date | date : "MMMM d, y" | uppercase }}
+        </p>
+      </div>
+    </div>
+    <div class="w-40 flex items-center mb-6">
+      <p class="text-[#ABBCD5] text-xs md:text-sm font-bold pr-4">SHARE:</p>
+      <a href="#" class="text-[#ABBCD5] w-16 mx-1">
+        <svg
+          [style.color]="'#506690'"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <path
+              d="M3 11C3 7.22876 3 5.34315 4.17157 4.17157C5.34315 3 7.22876 3 11 3H13C16.7712 3 18.6569 3 19.8284 4.17157C21 5.34315 21 7.22876 21 11V13C21 16.7712 21 18.6569 19.8284 19.8284C18.6569 21 16.7712 21 13 21H11C7.22876 21 5.34315 21 4.17157 19.8284C3 18.6569 3 16.7712 3 13V11Z"
+              stroke="#ABBCD5"
+            ></path>
+            <circle cx="16.5" cy="7.5" r="1.5" fill="#ABBCD5"></circle>
+            <circle cx="12" cy="12" r="3.5" stroke="#ABBCD5"></circle>
+          </g>
+        </svg>
+      </a>
+      <a href="#" class="text-[#ABBCD5] w-16 mx-1">
+        <svg
+          [style.color]="'#506690'"
+          viewBox="-5.5 0 32 32"
+          fill="#ABBCD5"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <title>facebook</title>
+            <path
+              d="M1.188 5.594h18.438c0.625 0 1.188 0.563 1.188 1.188v18.438c0 0.625-0.563 1.188-1.188 1.188h-18.438c-0.625 0-1.188-0.563-1.188-1.188v-18.438c0-0.625 0.563-1.188 1.188-1.188zM14.781 17.281h2.875l0.125-2.75h-3v-2.031c0-0.781 0.156-1.219 1.156-1.219h1.75l0.063-2.563s-0.781-0.125-1.906-0.125c-2.75 0-3.969 1.719-3.969 3.563v2.375h-2.031v2.75h2.031v7.625h2.906v-7.625z"
+              fill="#ABBCD5"
+              stroke="#ABBCD5"
+            ></path>
+          </g>
+        </svg>
+      </a>
+      <a href="#" class="text-[#ABBCD5] w-16 mx-1">
+        <svg
+          viewBox="0 -2 20 20"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          fill="#ABBCD5"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <title>twitter [#154]</title>
+            <desc>Created with Sketch.</desc>
+            <defs></defs>
+            <g
+              id="Page-1"
+              stroke="none"
+              stroke-width="1"
+              fill="none"
+              fill-rule="evenodd"
+            >
+              <g
+                id="Dribbble-Light-Preview"
+                transform="translate(-60.000000, -7521.000000)"
+                fill="#ABBCD5"
+              >
+                <g id="icons" transform="translate(56.000000, 160.000000)">
+                  <path
+                    d="M10.29,7377 C17.837,7377 21.965,7370.84365 21.965,7365.50546 C21.965,7365.33021 21.965,7365.15595 21.953,7364.98267 C22.756,7364.41163 23.449,7363.70276 24,7362.8915 C23.252,7363.21837 22.457,7363.433 21.644,7363.52751 C22.5,7363.02244 23.141,7362.2289 23.448,7361.2926 C22.642,7361.76321 21.761,7362.095 20.842,7362.27321 C19.288,7360.64674 16.689,7360.56798 15.036,7362.09796 C13.971,7363.08447 13.518,7364.55538 13.849,7365.95835 C10.55,7365.79492 7.476,7364.261 5.392,7361.73762 C4.303,7363.58363 4.86,7365.94457 6.663,7367.12996 C6.01,7367.11125 5.371,7366.93797 4.8,7366.62489 L4.8,7366.67608 C4.801,7368.5989 6.178,7370.2549 8.092,7370.63591 C7.488,7370.79836 6.854,7370.82199 6.24,7370.70483 C6.777,7372.35099 8.318,7373.47829 10.073,7373.51078 C8.62,7374.63513 6.825,7375.24554 4.977,7375.24358 C4.651,7375.24259 4.325,7375.22388 4,7375.18549 C5.877,7376.37088 8.06,7377 10.29,7376.99705"
+                    id="twitter-[#154]"
+                  ></path>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <img
+    [src]="post?.image"
+    alt="Photo description"
+    class="w-full h-[600px] object-cover mb-4 mt-8"
+  />
+  <p class="text-[#869AB8] font-bold text-center italic mb-6">
+    This is a caption on this photo for reference
+  </p>
+  <div class="mt-16">
+    <p class="mb-4 text-[#161C2D] text-justify font-bold">
+      {{ post?.description | repeat : 10 }}
+    </p>
+  </div>
+</div>
+
+@if (loading$ | async ) {
+<app-spinner />
+}
