@@ -36,7 +36,6 @@ export class SignupComponent {
       const { email, fullname, password } = this.signupForm.value;
       const success = this.authService.signUp({ email, fullname, password });
       if (success) {
-        console.log('Signup successful');
         this.signupForm.reset();
       }
     }

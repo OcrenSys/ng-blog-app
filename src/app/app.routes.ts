@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
-
+export const menu = [
+  { label: 'Articles', path: '/posts' },
+  { label: 'Favorites', path: '/posts/favorites' },
+];
 export const routes: Routes = [
   {
     path: '',

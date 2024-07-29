@@ -37,9 +37,7 @@ export class SigninComponent {
       const { email, password } = this.signinForm.value;
       const success = this.authService.signIn(email, password);
       if (success) {
-        console.log('Signin successful');
         this.signinForm.reset();
-        this.dynamicComponentService.modal.triggerCloseButton();
       }
     }
   }

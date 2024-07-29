@@ -32,7 +32,6 @@ export class PostDetailsComponent implements OnInit {
         const idParam = params.get('id');
         if (idParam) {
           this.id = parseInt(idParam);
-          console.log('Id: ', this.id);
           if (this.id) {
             this.postService
               .getPostById(this.id)

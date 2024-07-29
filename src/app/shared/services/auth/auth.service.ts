@@ -7,7 +7,7 @@ import { FavoritesService } from '../favorites/favorites.service';
   providedIn: 'root',
 })
 export class AuthService {
-  public titleSubject = new BehaviorSubject<string>('Login');
+  public labelSubject = new BehaviorSubject<string>('Login');
 
   private readonly storageKey = 'auth_user';
   private readonly currentKey = 'current_user';
@@ -24,7 +24,6 @@ export class AuthService {
 
     users.push(user);
     this.saveUsers(users);
-    console.log('User signed up successfully');
     return true;
   }
 
@@ -41,8 +40,7 @@ export class AuthService {
 
     localStorage.setItem(this.currentKey, email);
     localStorage.setItem(this.loggedInKey, 'true');
-    this.titleSubject.next('Logout');
-    console.log('User signed in successfully');
+    this.labelSubject.next('Logout');
     return true;
   }
 
@@ -51,8 +49,7 @@ export class AuthService {
     if (email) this.favoriteService.clearFavorites(email);
     localStorage.removeItem(this.loggedInKey);
     localStorage.removeItem(this.currentKey);
-    this.titleSubject.next('Login');
-    console.log('User signed out successfully');
+    this.labelSubject.next('Login');
   }
 
   isLogged(): boolean {

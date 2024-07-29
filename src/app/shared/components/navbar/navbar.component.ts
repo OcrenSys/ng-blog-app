@@ -1,30 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { Component, Type } from '@angular/core';
-import { ModalComponent } from '../modal/modal.component';
+import { Component } from '@angular/core';
 import { SigninComponent } from '../signin/signin.component';
 import { SignupComponent } from '../signup/signup.component';
 import { DynamicComponentService } from '../../services/dynamic-components/dynamic-component.service';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { BehaviorSubject } from 'rxjs';
+import { menu } from '../../../app.routes';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ModalComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
   protected signInComponent = SigninComponent;
   protected signUpComponent = SignupComponent;
+  protected label$ = new BehaviorSubject<string>('Login');
+  protected menu = menu;
 
-  constructor(private dynamicComponentService: DynamicComponentService) {}
+  constructor(
+    private dynamicComponentService: DynamicComponentService,
+    private authSerive: AuthService
+  ) {}
 
-  menu = [
-    { label: 'Articles', path: '/posts' },
-    { label: 'Favorites', path: '/posts/favorites' },
-  ];
+  ngOnInit(): void {
+    if (this.authSerive.isLogged()) this.authSerive.labelSubject.next('Logout');
+    this.label$ = this.authSerive.labelSubject;
+  }
 
-  openModal(component: Type<SigninComponent | SignupComponent>) {
-    this.dynamicComponentService.loadComponent(component);
+  onClick(): void {
+    if (!this.authSerive.isLogged()) this.onOpen();
+    else this.authSerive.signOut();
+  }
+
+  onOpen(): void {
+    this.dynamicComponentService.loadComponent(SigninComponent);
+    this.dynamicComponentService.modal.show();
   }
 }
