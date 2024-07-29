@@ -37,6 +37,7 @@ export class SignupComponent {
       const success = this.authService.signUp({ email, fullname, password });
       if (success) {
         this.signupForm.reset();
+        this.switchToSignIn();
       }
     }
   }

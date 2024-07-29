@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from '../../../common/interfaces/user.interface';
 import { BehaviorSubject } from 'rxjs';
-import { FavoritesService } from '../favorites/favorites.service';
+import { PostsService } from '../posts/posts.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,9 @@ export class AuthService {
   private readonly currentKey = 'current_user';
   private readonly loggedInKey = 'isLoggedIn';
 
-  constructor(private favoriteService: FavoritesService) {}
+  constructor(
+    private postsService: PostsService
+  ) {}
 
   signUp(user: User): boolean {
     const users = this.getUsers();
@@ -40,15 +42,15 @@ export class AuthService {
 
     localStorage.setItem(this.currentKey, email);
     localStorage.setItem(this.loggedInKey, 'true');
+    this.postsService.loadPosts();
     this.labelSubject.next('Logout');
     return true;
   }
 
   signOut(): void {
-    const email = this.getCurrentUserEmail();
-    if (email) this.favoriteService.clearFavorites(email);
     localStorage.removeItem(this.loggedInKey);
     localStorage.removeItem(this.currentKey);
+    this.postsService.loadPosts();
     this.labelSubject.next('Login');
   }
 

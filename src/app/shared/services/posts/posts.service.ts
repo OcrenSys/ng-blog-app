@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Post } from '../../../common/interfaces/post.interface';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { finalize, map, distinctUntilChanged } from 'rxjs/operators';
+import {
+  finalize,
+  map,
+  distinctUntilChanged,
+  tap,
+  filter,
+  take,
+} from 'rxjs/operators';
 import { PostRepository } from '../repositories/post.repository.service';
 import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
-import { AuthService } from '../auth/auth.service';
 import { FavoritesService } from '../favorites/favorites.service';
+import { mockPost } from '../../../common/utilities/post.utilities';
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +29,7 @@ export class PostsService implements PostServiceInterface {
 
   constructor(
     private postRepository: PostRepository,
-    private favoriteService: FavoritesService,
-    private authService: AuthService
+    private favoriteService: FavoritesService
   ) {
     this.posts$ = this.initializePostsStream();
     this.loadPosts();
@@ -33,28 +39,81 @@ export class PostsService implements PostServiceInterface {
     this.searchTermSubject.next(term);
   }
 
+  create(
+    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+  ): Observable<Post> {
+    const _post: any = {
+      title: post.title,
+      subtitle: post.subtitle,
+      description: post.description,
+    };
+
+    return this.postRepository.createPost(_post).pipe(
+      tap((createdPost) => {
+        const currentPosts = this.postsSubject.value;
+        this.postsSubject.next([
+          { ...mockPost, ...createdPost },
+          ...currentPosts,
+        ]);
+      })
+    );
+  }
+
+  update(
+    id: number,
+    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+  ): Observable<Post> {
+    return this.postRepository
+      .updatePost(id, post, this.postsSubject.value)
+      .pipe(
+        map((updatedPosts) => {
+          const updatedPost = updatedPosts.find((p) => p.id === id);
+
+          if (updatedPost) {
+            this.postsSubject.next(updatedPosts);
+            return updatedPost;
+          } else {
+            throw new Error('Post not found');
+          }
+        })
+      );
+  }
+
+  delete(id: number): Observable<Post[]> {
+    return this.postRepository.deletePost(id, this.postsSubject.value).pipe(
+      tap((updatedPosts) => {
+        this.postsSubject.next(updatedPosts);
+      })
+    );
+  }
+
   getMorePosts(): void {
     const currentPage = this.currentPageSubject.value + 1;
     this.currentPageSubject.next(currentPage);
   }
 
   getPostById(id: number): Observable<Post> {
-    return this.postRepository
-      .getPostById(id)
-      .pipe(finalize(() => this.loadingSubject.next(false)));
+    return this.postRepository.getPost(id, this.postsSubject).pipe(
+      filter((post): post is Post => post !== undefined),
+      finalize(() => this.loadingSubject.next(false))
+    );
   }
 
-  private loadPosts(): void {
-    this.postRepository.getAllPosts().subscribe((posts) => {
-      this.postsSubject.next(this.checkFavorites(posts));
-      this.loadingSubject.next(false);
-    });
+  loadPosts(): void {
+    this.postRepository
+      .getAllPosts()
+      .pipe(take(1))
+      .subscribe((posts) => {
+        this.postsSubject.next(this.checkFavorites(posts));
+        this.loadingSubject.next(false);
+      });
   }
 
   private checkFavorites(posts: Post[]): Post[] {
-    const currentUser = this.authService.getCurrentUserEmail();
-    if (currentUser) {
-      const favoritePostIds = this.favoriteService.getFavorites(currentUser);
+    const currentUserEmail = localStorage.getItem('current_user');
+    if (currentUserEmail) {
+      const favoritePostIds =
+        this.favoriteService.getFavorites(currentUserEmail);
 
       const updatedPosts = posts.map((post) => ({
         ...post,
@@ -121,18 +180,14 @@ export class PostsService implements PostServiceInterface {
 
     if (postIndex !== -1) {
       posts[postIndex] = { ...posts[postIndex], isFavorite };
-      this.postRepository
-        .setFavoriteStatus(id, isFavorite)
-        .subscribe((response) => {
-          console.log(response);
-          this.updateFavoriteStorage(id);
-        });
+
+      this.updateFavoriteStorage(id);
       this.postsSubject.next(posts);
     }
   }
 
   updateFavoriteStorage(id: number) {
-    const currentUserEmail = this.authService.getCurrentUserEmail();
+    const currentUserEmail = localStorage.getItem('current_user');
     if (currentUserEmail) {
       this.favoriteService.saveFavorite(currentUserEmail, id.toString());
     }

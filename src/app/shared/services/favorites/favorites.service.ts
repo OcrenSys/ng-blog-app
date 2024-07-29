@@ -13,10 +13,11 @@ export class FavoritesService {
   saveFavorite(email: string, postId: string): void {
     const key = this.getFavoritesKey(email);
     let favorites = this.getFavorites(email);
-    if (!favorites.includes(postId)) {
-      favorites.push(postId);
-      localStorage.setItem(key, JSON.stringify(favorites));
-    }
+    if (favorites.includes(postId))
+      favorites = favorites.filter((id) => id !== postId);
+    else favorites.push(postId);
+
+    localStorage.setItem(key, JSON.stringify(favorites));
   }
 
   getFavorites(email: string): string[] {

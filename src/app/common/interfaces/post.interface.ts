@@ -6,11 +6,12 @@ export interface Post {
   title: string;
   subtitle: string;
   description: string;
-  date: Date; 
+  date: Date | string;
   image: string;
   caption: string;
   price: number;
   isFavorite: boolean;
   status: Status;
   author: Author;
+  isNew: boolean;
 }
