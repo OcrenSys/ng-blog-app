@@ -7,6 +7,7 @@ import { Post } from '../../../common/interfaces/post.interface';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { DynamicComponentService } from '../../../shared/services/dynamic-components/dynamic-component.service';
 import { FormComponent } from '../../../shared/components/form/form.component';
+import { AuthService } from '../../../shared/services/auth/auth.service';
 
 @Component({
   selector: 'app-post-list',
@@ -21,12 +22,17 @@ export class PostListComponent {
 
   constructor(
     private readonly postService: PostsService,
+    private readonly authService: AuthService,
     private readonly dynamicService: DynamicComponentService
   ) {}
 
   ngOnInit(): void {
     this.posts$ = this.postService.posts$;
     this.loading$ = this.postService.loadingSubject;
+  }
+
+  get isLogged(): boolean {
+    return this.authService.isLogged();
   }
 
   onAdd() {
