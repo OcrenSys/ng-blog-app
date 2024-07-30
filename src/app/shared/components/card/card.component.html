@@ -28,6 +28,7 @@
       >
         {{ post?.title }}
       </h2>
+      @if (isLogged) {
       <button
         type="button"
         (click)="onEdit($event)"
@@ -72,6 +73,7 @@
 
         <span class="sr-only">Icon description</span>
       </button>
+      }
     </div>
     <p class="mt-1 text-[#6B7C93]">
       {{ post?.description }}

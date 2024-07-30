@@ -27,6 +27,10 @@ export class CardComponent {
     private dynamicComponentService: DynamicComponentService
   ) {}
 
+  get isLogged(): boolean {
+    return this.authSerive.isLogged();
+  }
+
   onFavorite($event: Event): void {
     if ($event) $event.stopPropagation();
 
