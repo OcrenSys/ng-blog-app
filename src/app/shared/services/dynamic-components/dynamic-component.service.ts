@@ -6,11 +6,15 @@ import {
 } from '@angular/core';
 import { SigninComponent } from '../../components/signin/signin.component';
 import { SignupComponent } from '../../components/signup/signup.component';
+import { ModalInterface } from 'flowbite';
+import { FormComponent } from '../../components/form/form.component';
+import { Post } from '../../../common/interfaces/post.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DynamicComponentService {
+  public modal!: ModalInterface;
   private _viewContainerRef!: ViewContainerRef;
   private _title: string = '';
 
@@ -24,19 +28,33 @@ export class DynamicComponentService {
     this._viewContainerRef = viewContainerRef;
   }
 
-  loadComponent(component: Type<SigninComponent | SignupComponent>) {
+  loadComponent(
+    component: Type<SigninComponent | SignupComponent | FormComponent>,
+    data?: unknown
+  ) {
     if (this._viewContainerRef) {
+      this._viewContainerRef.clear();
+
       const componentFactory =
         this.componentFactoryResolver.resolveComponentFactory<
-          SigninComponent | SignupComponent
+          SigninComponent | SignupComponent | FormComponent
         >(component);
 
-      this._viewContainerRef.clear();
       const ref = this._viewContainerRef.createComponent(componentFactory);
-      if (ref.instance instanceof SigninComponent) {
-        this._title = 'Signin';
-      } else if (ref.instance instanceof SignupComponent) {
-        this._title = 'Signup';
+
+      switch (component) {
+        case SigninComponent:
+          this._title = 'Signin';
+          break;
+        case SignupComponent:
+          this._title = 'Signup';
+          break;
+        case FormComponent:
+          this._title = 'Post';
+          if (data && ref.instance instanceof FormComponent) {
+            (ref.instance as FormComponent).data = data as Post;
+          }
+          break;
       }
     }
   }

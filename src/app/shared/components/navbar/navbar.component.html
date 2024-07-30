@@ -14,12 +14,9 @@
     <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <a
         type="button"
-        (click)="openModal(signInComponent)"
-        data-modal-target="modal"
-        data-modal-toggle="modal"
+        (click)="onClick()"
         class="block py-2 px-3 text-[#506690] font-bold text-whiterounded md:bg-transparent md:p-0 hover:cursor-pointer"
-        aria-current="page"
-        >{{ "Login" }}</a
+        >{{ label$ | async }}</a
       >
       <button
         data-collapse-toggle="navbar-sticky"
@@ -57,13 +54,11 @@
         @for (item of menu; track $index) {
         <li>
           <a
-            [href]="item.path"
+            [routerLink]="[item.path]"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             class="block py-2 px-3 font-bold text-whiterounded md:bg-transparent md:p-0"
             aria-current="page"
-            [ngClass]="{
-              'text-blue-700': $index === 0,
-              ' text-[#506690]': $index !== 0
-            }"
             >{{ item.label }}</a
           >
         </li>
@@ -72,5 +67,3 @@
     </div>
   </div>
 </nav>
-
-<app-modal />

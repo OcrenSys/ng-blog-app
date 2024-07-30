@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
-
+export const menu = [
+  { label: 'Articles', path: '/posts' },
+  { label: 'Favorites', path: '/posts/favorites' },
+];
 export const routes: Routes = [
   {
     path: '',
@@ -18,6 +21,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/pages/post-list/post-list.component').then(
             (module) => module.PostListComponent
+          ),
+      },
+      {
+        path: 'favorites',
+        loadComponent: () =>
+          import('./features/pages/favorites/favorites.component').then(
+            (module) => module.FavoritesComponent
           ),
       },
       {

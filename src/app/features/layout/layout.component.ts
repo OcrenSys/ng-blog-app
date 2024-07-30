@@ -4,6 +4,8 @@ import { PostListComponent } from '../pages/post-list/post-list.component';
 import { SearchbarComponent } from '../../shared/components/searchbar/searchbar.component';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { RouterOutlet } from '@angular/router';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
+import { CardComponent } from '../../shared/components/card/card.component';
 
 @Component({
   selector: 'app-layout',
@@ -13,6 +15,8 @@ import { RouterOutlet } from '@angular/router';
     PostListComponent,
     SearchbarComponent,
     NavbarComponent,
+    ModalComponent,
+    CardComponent,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',
