@@ -13,7 +13,7 @@ export const mockPost: Post = {
   isFavorite: true,
   status: Status.onSale,
   author: {
-    id: '1',
+    id: 1,
     name: 'John',
     lastname: 'Doe',
     avatar: 'https://i.pravatar.cc/150?img=1',

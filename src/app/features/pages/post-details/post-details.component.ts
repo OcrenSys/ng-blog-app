@@ -21,7 +21,7 @@ export class PostDetailsComponent implements OnInit {
 
   constructor(
     private activateRoute: ActivatedRoute,
-    private postService: PostsService
+    private postService: PostsService,
   ) {}
 
   ngOnInit(): void {

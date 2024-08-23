@@ -23,23 +23,22 @@ import { Author } from '../../../common/interfaces/author.interface';
   providedIn: 'root',
 })
 export class PostRepository implements PostRepositoryInterface {
-  private apiUrl =
-    'https://my-json-server.typicode.com/ocrensys/ng-blog-app-db/posts';
-  private authorUrl =
-    'https://my-json-server.typicode.com/ocrensys/ng-blog-app-db/authors/';
+  private baseUrl = 'http://localhost:3000';
+  private postUrl = `${this.baseUrl}/posts`;
+  private authorUrl = `${this.baseUrl}/authors`;
 
   private httpClient: HttpClient = inject(HttpClient);
 
-  /**
-   * *! can be implemented only for posts hosted on the server
-   *  */
   getAllPosts(): Observable<Post[]> {
-    return this.httpClient.get<Post[]>(this.apiUrl).pipe(
+    return this.httpClient.get<Post[]>(this.postUrl).pipe(
       switchMap((posts: Post[]) => {
         const authorRequests = posts.map((post) =>
           this.httpClient
-            .get<Author>(`${this.authorUrl}${post.author}`)
-            .pipe(catchError(this.handleError))
+            .get<Author[]>(`${this.authorUrl}?id=${post.author}`)
+            .pipe(
+              map(([author, ...rest]: Author[]) => author),
+              catchError(this.handleError),
+            ),
         );
 
         return forkJoin(authorRequests).pipe(
@@ -48,65 +47,55 @@ export class PostRepository implements PostRepositoryInterface {
               ...post,
               author: authors[index],
             }));
-          })
+          }),
         );
       }),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
-  getPost(
-    id: number,
-    postsSubject: BehaviorSubject<Post[]>
-  ): Observable<Post | undefined> {
-    return postsSubject.asObservable().pipe(
-      map((posts: Post[]) => posts.find((post) => post.id === id)),
-      catchError(this.handleError)
-    );
-  }
-
-  /**
-   * *! can be implemented only for posts hosted on the server
-   *  */
   getPostById(id: number): Observable<Post> {
-    return this.httpClient.get<Post>(`${this.apiUrl}/${id}`).pipe(
+    return this.httpClient.get<Post[]>(`${this.postUrl}?id=${id}`).pipe(
+      map(([post, ...rest]: Post[]) => post),
       switchMap((post: Post) =>
-        combineLatest([
-          of(post),
-          this.httpClient.get<Author>(`${this.authorUrl}${post.author}`),
-        ])
+        forkJoin({
+          post: of(post),
+          author: this.httpClient
+            .get<Author[]>(`${this.authorUrl}?id=${post.author}`)
+            .pipe(map(([author, ...rest]: Author[]) => author)),
+        }).pipe(
+          map(({ post, author }) => ({
+            ...post,
+            author,
+          })),
+          catchError(this.handleError),
+        ),
       ),
-      map(([post, author]) => ({ ...post, author })),
-      catchError(this.handleError)
+      catchError(this.handleError),
     );
   }
 
-  createPost(post: Omit<Post, 'id'>): Observable<Post> {
+  createPost(post: Post): Observable<Post> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.httpClient.post<Post>(this.apiUrl, post, { headers });
+    return this.httpClient.post<Post>(this.postUrl, post, { headers });
   }
 
-  updatePost(
-    id: number,
-    post: Partial<Post>,
-    posts: Post[]
-  ): Observable<Post[]> {
-    const updatedPosts = [...posts];
-    const postIndex = updatedPosts.findIndex((p) => p.id === id);
+  updatePost(id: number, post: Partial<Post>): Observable<Post> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const url = `${this.postUrl}/${id}`;
 
-    if (postIndex !== -1) {
-      updatedPosts[postIndex] = { ...updatedPosts[postIndex], ...post };
-    }
-    return of(updatedPosts);
+    return this.httpClient.patch<Post>(url, post, { headers });
   }
 
-  deletePost(id: number, posts: Post[]): Observable<Post[]> {
-    const updatedPosts = posts.filter((post) => post.id !== id);
-    return of(updatedPosts);
+  deletePost(id: number): Observable<Post> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const url = `${this.postUrl}/${id}`;
+
+    return this.httpClient.delete<Post>(url, { headers });
   }
 
   setFavoriteStatus(id: number, isFavorite: boolean): Observable<Post> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.postUrl}/${id}`;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const body = { isFavorite };
 
@@ -115,7 +104,7 @@ export class PostRepository implements PostRepositoryInterface {
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     return throwError(
-      `Something went wrong; please try again later. Error: ${error.message}`
+      `Something went wrong; please try again later. Error: ${error.message}`,
     );
   }
 }
