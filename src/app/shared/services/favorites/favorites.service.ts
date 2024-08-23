@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavoritesService {
-  constructor() {}
+  private storageService: StorageService = inject(StorageService);
 
   private getFavoritesKey(email: string): string {
     return `favorites_${email}`;
@@ -17,12 +18,12 @@ export class FavoritesService {
       favorites = favorites.filter((id) => id !== postId);
     else favorites.push(postId);
 
-    localStorage.setItem(key, JSON.stringify(favorites));
+    this.storageService.setItem(key, JSON.stringify(favorites));
   }
 
   getFavorites(email: string): string[] {
     const key = this.getFavoritesKey(email);
-    const favorites = localStorage.getItem(key);
+    const favorites = this.storageService.getItem(key);
     return favorites ? JSON.parse(favorites) : [];
   }
 
@@ -30,11 +31,11 @@ export class FavoritesService {
     const key = this.getFavoritesKey(email);
     let favorites = this.getFavorites(email);
     favorites = favorites.filter((id) => id !== postId);
-    localStorage.setItem(key, JSON.stringify(favorites));
+    this.storageService.setItem(key, JSON.stringify(favorites));
   }
 
   clearFavorites(email: string): void {
     const key = this.getFavoritesKey(email);
-    localStorage.removeItem(key);
+    this.storageService.removeItem(key);
   }
 }

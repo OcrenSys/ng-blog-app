@@ -5,11 +5,11 @@ export interface PostServiceInterface {
   getMorePosts(): void;
   getPostById(id: number): void;
   create(
-    Post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+    Post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>,
   ): Observable<Post>;
   update(
     id: number,
-    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>,
   ): Observable<Post>;
-  delete(id: number): Observable<Post[]>;
+  delete(id: number): Observable<Post>;
 }

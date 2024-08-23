@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Post } from '../../../common/interfaces/post.interface';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import {
@@ -6,22 +6,28 @@ import {
   map,
   distinctUntilChanged,
   tap,
-  filter,
   take,
+  catchError,
 } from 'rxjs/operators';
 import { PostRepository } from '../repositories/post.repository.service';
 import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
 import { FavoritesService } from '../favorites/favorites.service';
-import { mockPost } from '../../../common/utilities/post.utilities';
+import {
+  getRandomId,
+  mockPost,
+} from '../../../common/utilities/post.utilities';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostsService implements PostServiceInterface {
+  private storageService: StorageService = inject(StorageService);
+
   private currentPageSubject = new BehaviorSubject<number>(1);
   private postsSubject = new BehaviorSubject<Post[]>([]);
   private searchTermSubject = new BehaviorSubject<string>('');
-  private readonly pageSize = 4;
+  private readonly pageSize = 6;
 
   public loadingSubject = new BehaviorSubject<boolean>(true);
   public resultsSubject = new BehaviorSubject<number>(0);
@@ -29,7 +35,7 @@ export class PostsService implements PostServiceInterface {
 
   constructor(
     private postRepository: PostRepository,
-    private favoriteService: FavoritesService
+    private favoriteService: FavoritesService,
   ) {
     this.posts$ = this.initializePostsStream();
     this.loadPosts();
@@ -40,9 +46,10 @@ export class PostsService implements PostServiceInterface {
   }
 
   create(
-    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>,
   ): Observable<Post> {
     const _post: any = {
+      id: getRandomId().toString(),
       title: post.title,
       subtitle: post.subtitle,
       description: post.description,
@@ -55,35 +62,37 @@ export class PostsService implements PostServiceInterface {
           { ...mockPost, ...createdPost },
           ...currentPosts,
         ]);
-      })
+      }),
     );
   }
 
   update(
     id: number,
-    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>
+    post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>,
   ): Observable<Post> {
-    return this.postRepository
-      .updatePost(id, post, this.postsSubject.value)
-      .pipe(
-        map((updatedPosts) => {
-          const updatedPost = updatedPosts.find((p) => p.id === id);
-
-          if (updatedPost) {
-            this.postsSubject.next(updatedPosts);
-            return updatedPost;
-          } else {
-            throw new Error('Post not found');
-          }
-        })
-      );
+    return this.postRepository.updatePost(id, post).pipe(
+      map((_updated: Post) => {
+        const posts = this.postsSubject.value.map((_post) =>
+          _post.id === id ? { ..._updated, author: _post.author } : _post,
+        );
+        this.postsSubject.next(posts);
+        return _updated;
+      }),
+      catchError((error) => {
+        throw new Error('An error occurred while updating the post', error);
+      }),
+    );
   }
 
-  delete(id: number): Observable<Post[]> {
-    return this.postRepository.deletePost(id, this.postsSubject.value).pipe(
-      tap((updatedPosts) => {
-        this.postsSubject.next(updatedPosts);
-      })
+  delete(id: number): Observable<Post> {
+    return this.postRepository.deletePost(id).pipe(
+      tap((_deleted: Post) => {
+        const _posts = this.postsSubject.value.filter(
+          (_post: Post) => _post.id !== _deleted.id,
+        );
+        this.postsSubject.next(_posts);
+        return _deleted;
+      }),
     );
   }
 
@@ -93,10 +102,9 @@ export class PostsService implements PostServiceInterface {
   }
 
   getPostById(id: number): Observable<Post> {
-    return this.postRepository.getPost(id, this.postsSubject).pipe(
-      filter((post): post is Post => post !== undefined),
-      finalize(() => this.loadingSubject.next(false))
-    );
+    return this.postRepository
+      .getPostById(id)
+      .pipe(finalize(() => this.loadingSubject.next(false)));
   }
 
   loadPosts(): void {
@@ -110,7 +118,7 @@ export class PostsService implements PostServiceInterface {
   }
 
   private checkFavorites(posts: Post[]): Post[] {
-    const currentUserEmail = localStorage.getItem('current_user');
+    const currentUserEmail = this.storageService.getItem('current_user');
     if (currentUserEmail) {
       const favoritePostIds =
         this.favoriteService.getFavorites(currentUserEmail);
@@ -136,7 +144,7 @@ export class PostsService implements PostServiceInterface {
         const filteredPosts = this.filterPosts(posts, searchTerm);
         this.resultsSubject.next(filteredPosts.length);
         return this.paginatePosts(filteredPosts, page);
-      })
+      }),
     );
   }
 
@@ -187,7 +195,7 @@ export class PostsService implements PostServiceInterface {
   }
 
   updateFavoriteStorage(id: number) {
-    const currentUserEmail = localStorage.getItem('current_user');
+    const currentUserEmail = this.storageService.getItem('current_user');
     if (currentUserEmail) {
       this.favoriteService.saveFavorite(currentUserEmail, id.toString());
     }
