@@ -6,14 +6,13 @@ import {
 import { Post } from '../../../common/interfaces/post.interface';
 import { PostRepositoryInterface } from '../../../common/interfaces/post.repository.interface';
 import {
-  BehaviorSubject,
   catchError,
-  combineLatest,
   forkJoin,
   map,
   Observable,
   of,
   switchMap,
+  tap,
   throwError,
 } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
@@ -32,14 +31,17 @@ export class PostRepository implements PostRepositoryInterface {
   getAllPosts(): Observable<Post[]> {
     return this.httpClient.get<Post[]>(this.postUrl).pipe(
       switchMap((posts: Post[]) => {
-        const authorRequests = posts.map((post) =>
-          this.httpClient
-            .get<Author[]>(`${this.authorUrl}?id=${post.author}`)
+        const authorRequests = posts.map((post) => {
+          const authorId =
+            typeof post.author === 'number' ? post.author : post.author.id;
+
+          return this.httpClient
+            .get<Author[]>(`${this.authorUrl}?id=${authorId}`)
             .pipe(
               map(([author, ...rest]: Author[]) => author),
               catchError(this.handleError),
-            ),
-        );
+            );
+        });
 
         return forkJoin(authorRequests).pipe(
           map((authors) => {
@@ -48,6 +50,7 @@ export class PostRepository implements PostRepositoryInterface {
               author: authors[index],
             }));
           }),
+          tap((posts) => posts.sort((prev, next) => next.id - prev.id)),
         );
       }),
       catchError(this.handleError),
@@ -57,11 +60,14 @@ export class PostRepository implements PostRepositoryInterface {
   getPostById(id: number): Observable<Post> {
     return this.httpClient.get<Post[]>(`${this.postUrl}?id=${id}`).pipe(
       map(([post, ...rest]: Post[]) => post),
-      switchMap((post: Post) =>
-        forkJoin({
+      switchMap((post: Post) => {
+        const authorId =
+          typeof post.author === 'number' ? post.author : post.author.id;
+
+        return forkJoin({
           post: of(post),
           author: this.httpClient
-            .get<Author[]>(`${this.authorUrl}?id=${post.author}`)
+            .get<Author[]>(`${this.authorUrl}?id=${authorId}`)
             .pipe(map(([author, ...rest]: Author[]) => author)),
         }).pipe(
           map(({ post, author }) => ({
@@ -69,8 +75,8 @@ export class PostRepository implements PostRepositoryInterface {
             author,
           })),
           catchError(this.handleError),
-        ),
-      ),
+        );
+      }),
       catchError(this.handleError),
     );
   }
