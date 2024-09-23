@@ -13,5 +13,4 @@ export interface Post {
   isFavorite: boolean;
   status: Status;
   author: Author;
-  isNew: boolean;
 }

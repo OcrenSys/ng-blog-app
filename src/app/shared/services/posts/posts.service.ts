@@ -13,7 +13,7 @@ import { PostRepository } from '../repositories/post.repository.service';
 import { PostServiceInterface } from '../../../common/interfaces/post.service.interface';
 import { FavoritesService } from '../favorites/favorites.service';
 import {
-  getRandomId,
+  getRandomNumber,
   mockPost,
 } from '../../../common/utilities/post.utilities';
 import { StorageService } from '../storage/storage.service';
@@ -49,13 +49,13 @@ export class PostsService implements PostServiceInterface {
     post: Pick<Post, 'title' | 'subtitle' | 'description' | 'price'>,
   ): Observable<Post> {
     const _post: any = {
-      id: getRandomId().toString(),
+      id: getRandomNumber().toString(),
       title: post.title,
       subtitle: post.subtitle,
       description: post.description,
     };
 
-    return this.postRepository.createPost(_post).pipe(
+    return this.postRepository.createPost({ ...mockPost, ..._post }).pipe(
       tap((createdPost) => {
         const currentPosts = this.postsSubject.value;
         this.postsSubject.next([
