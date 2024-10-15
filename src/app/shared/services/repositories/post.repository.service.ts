@@ -17,12 +17,13 @@ import {
 } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import { Author } from '../../../common/interfaces/author.interface';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostRepository implements PostRepositoryInterface {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = environment.server_url;
   private postUrl = `${this.baseUrl}/posts`;
   private authorUrl = `${this.baseUrl}/authors`;
 
